@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 2.8.10)
+
+project(lodepng)
+
+if(MINGW OR UNIX)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-attributes")
+endif()
+
+set(LODEPNG_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lodepng)
+include_directories( ${LODEPNG_SOURCE_DIR}/include)
+
+if(LODEPNG_BUILD_SHARED)
+	set(LODEPNG_LIBTYPE SHARED)
+else()
+	set(LODEPNG_LIBTYPE STATIC)
+endif()
+
+set(API 
+	${LODEPNG_SOURCE_DIR}/include/lodepng.h)
+
+source_group(API FILES ${API})
+
+set(SOURCES
+	${LODEPNG_SOURCE_DIR}/src/lodepng.cpp)
+
+add_library(lodepng ${LODEPNG_LIBTYPE} ${SOURCES} ${API})
+
+set_target_properties(lodepng PROPERTIES PUBLIC_HEADER "${API}")
+
+set(BINDIR bin)
+set(BINCOMPONENT runtime)
+set(LIBDIR lib)
+set(LIBCOMPONENT dev)
+set(INCLUDEDIR include)
+set(INCLUDECOMPONENT dev)
+
+install(TARGETS lodepng
+	RUNTIME DESTINATION ${BINDIR} COMPONENT ${BINCOMPONENT}
+	LIBRARY DESTINATION ${LIBDIR} COMPONENT ${LIBCOMPONENT}
+	ARCHIVE DESTINATION ${LIBDIR} COMPONENT ${LIBCOMPONENT}
+	PUBLIC_HEADER DESTINATION ${INCLUDEDIR} COMPONENT ${INCLUDECOMPONENT})
